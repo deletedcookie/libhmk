@@ -26,6 +26,8 @@
 #include "tusb.h"
 #include "wear_leveling.h"
 #include "xinput.h"
+#include "i2c.h"
+#include "stm32f4xx_hal_conf.h"
 
 int main(void) {
 #if defined(LOG_ENABLED)
@@ -37,6 +39,7 @@ int main(void) {
   timer_init();
   crc32_init();
   flash_init();
+  MX_I2C1_Init();
 
   // Initialize the persistent configuration
   wear_leveling_init();
@@ -54,13 +57,19 @@ int main(void) {
 
   tud_init(BOARD_TUD_RHPORT);
 
-  while (1) {
-    tud_task();
+  HAL_I2C_EnableListen_IT(&hi2c1);
+ 
 
-    analog_task();
-    matrix_scan();
-    layout_task();
-    xinput_task();
+  while (1) {
+
+
+    HAL_Delay(1);
+    // tud_task();
+
+    // analog_task();
+    // matrix_scan();
+    // layout_task();
+    // xinput_task();
 #if defined(LOG_ENABLED)
     log_task();
 #endif

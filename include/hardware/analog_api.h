@@ -16,7 +16,8 @@
 #pragma once
 
 #include "common.h"
-
+// ADC values for each key
+uint8_t adc_values[NUM_KEYS];
 //--------------------------------------------------------------------+
 // Analog Configuration
 //--------------------------------------------------------------------+
