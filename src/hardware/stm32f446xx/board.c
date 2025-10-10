@@ -31,7 +31,7 @@ static void board_clock_init(void) {
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   rcc_osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  rcc_osc_init.HSEState = RCC_HSE_ON;
+  rcc_osc_init.HSEState = RCC_HSE_BYPASS;
   rcc_osc_init.PLL.PLLState = RCC_PLL_ON;
   rcc_osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   rcc_osc_init.PLL.PLLM = BOARD_HSE_VALUE / 1000000;
