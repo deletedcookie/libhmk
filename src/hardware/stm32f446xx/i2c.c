@@ -1,10 +1,27 @@
-
 /* Includes ------------------------------------------------------------------*/
 #include "i2c.h"
 #include "hardware/hardware.h"
 
 
 I2C_HandleTypeDef hi2c1;
+
+
+
+void I2C_adc_get(void)
+{
+  HAL_I2C_Master_Sequential_Receive_IT(&hi2c1, 0xE1, RxBuffer, 96, I2C_FIRST_AND_LAST_FRAME);
+
+}
+
+
+void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef * hi2c)
+{
+  for(uint8_t i = 0; i <= 47; i++)
+  {
+    i2c_adc_buffer[i] = (RxBuffer[i<<1]<<8) | RxBuffer[(i<<1)+1];
+  }
+}
+
 
 /* I2C1 init function */
 void MX_I2C1_Init(void)
@@ -23,7 +40,7 @@ void MX_I2C1_Init(void)
   hi2c1.Init.OwnAddress1 = 0xE0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0xE2;
+  hi2c1.Init.OwnAddress2 = 0xE0;
   hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
   hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
   if (HAL_I2C_Init(&hi2c1) != HAL_OK)
@@ -88,3 +105,22 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
   }
 }
 
+/**
+  * @brief This function handles I2C1 event interrupt.
+  */
+void I2C1_EV_IRQHandler(void)
+{
+
+  HAL_I2C_EV_IRQHandler(&hi2c1);
+
+}
+
+/**
+  * @brief This function handles I2C1 error interrupt.
+  */
+void I2C1_ER_IRQHandler(void)
+{
+
+  HAL_I2C_ER_IRQHandler(&hi2c1);
+
+}

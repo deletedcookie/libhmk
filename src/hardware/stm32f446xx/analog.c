@@ -93,7 +93,7 @@ static volatile bool adc_initialized = false;
 __attribute__((aligned(8))) static volatile uint16_t
     adc_buffer[ADC_NUM_MUX_INPUTS + ADC_NUM_RAW_INPUTS];
 // ADC values for each key
-static uint8_t adc_values[NUM_KEYS];
+static volatile uint16_t adc_values[NUM_KEYS];
 
 void analog_init(void) {
   ADC_ChannelConfTypeDef channel_config = {0};
@@ -111,7 +111,7 @@ void analog_init(void) {
   // Initialize the ADC peripheral
   adc_handle.Instance = ADC1;
   adc_handle.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-  adc_handle.Init.Resolution = ADC_RESOLUTION_8B;
+  adc_handle.Init.Resolution = ADC_RESOLUTION_12B;
   adc_handle.Init.ScanConvMode = ENABLE;
   adc_handle.Init.ContinuousConvMode = DISABLE;
   adc_handle.Init.DiscontinuousConvMode = DISABLE;
@@ -220,13 +220,12 @@ void analog_init(void) {
 
 
 
-void analog_task(void) {
-
-    if(HAL_I2C_Master_Sequential_Receive_IT(&hi2c1, 0xE1, &adc_values[37], 48, I2C_FIRST_AND_LAST_FRAME) != HAL_OK)
-    {
-       HAL_Delay(1);
-    }
-    HAL_Delay(5000);
+void analog_task(void)
+{
+  for(uint8_t i = 0; i <= 47; i++)
+  {
+    adc_values[37+i] = i2c_adc_buffer[i];
+  }
 
 }
 

@@ -30,8 +30,8 @@
     }
   },
   "calibration": {
-    "initial_rest_value": 255,
-    "initial_bottom_out_threshold": 200
+    "initial_rest_value": 4095,
+    "initial_bottom_out_threshold": 4000
   },
   "layout": [
     [

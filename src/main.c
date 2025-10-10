@@ -27,8 +27,6 @@
 #include "wear_leveling.h"
 #include "xinput.h"
 #include "i2c.h"
-#include "stm32f4xx_hal_conf.h"
-#include "stm32f4xx_it.h"
 
 int main(void) {
 #if defined(LOG_ENABLED)
@@ -64,7 +62,8 @@ int main(void) {
   while (1) {
     tud_task();
 
-    // analog_task();
+    I2C_adc_get();
+    analog_task();
     matrix_scan();
     layout_task();
     xinput_task();
