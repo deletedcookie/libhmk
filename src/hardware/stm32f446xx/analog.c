@@ -14,7 +14,7 @@
  */
 
 #include "hardware/hardware.h"
-
+#include "i2c.h"
 #include "stm32f4xx_hal.h"
 
 // GPIO ports for each ADC channel
@@ -92,7 +92,8 @@ static volatile bool adc_initialized = false;
 // Buffer for DMA transfer
 __attribute__((aligned(8))) static volatile uint16_t
     adc_buffer[ADC_NUM_MUX_INPUTS + ADC_NUM_RAW_INPUTS];
-
+// ADC values for each key
+static volatile uint16_t adc_values[NUM_KEYS];
 
 void analog_init(void) {
   ADC_ChannelConfTypeDef channel_config = {0};
@@ -110,7 +111,7 @@ void analog_init(void) {
   // Initialize the ADC peripheral
   adc_handle.Instance = ADC1;
   adc_handle.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-  adc_handle.Init.Resolution = ADC_RESOLUTION_8B;
+  adc_handle.Init.Resolution = ADC_RESOLUTION_12B;
   adc_handle.Init.ScanConvMode = ENABLE;
   adc_handle.Init.ContinuousConvMode = DISABLE;
   adc_handle.Init.DiscontinuousConvMode = DISABLE;
@@ -216,7 +217,15 @@ void analog_init(void) {
     ;
 }
 
-void analog_task(void) {}
+void analog_task(void)
+{
+  // Split 16 bit array into 8 bit array
+  for (uint8_t i = 0; i <= 47; i++)
+  {
+    TxBuffer[(i<<1)] = adc_values[i]>>8;  // MSB
+    TxBuffer[(i<<1)+1] = adc_values[i];   // LSB
+  }
+}
 
 uint16_t analog_read(uint8_t key) { return adc_values[key]; }
 

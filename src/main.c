@@ -61,12 +61,9 @@ int main(void) {
  
 
   while (1) {
-
-
-    HAL_Delay(1);
     // tud_task();
 
-    // analog_task();
+    analog_task();
     // matrix_scan();
     // layout_task();
     // xinput_task();

@@ -25,6 +25,42 @@
 
 I2C_HandleTypeDef hi2c1;
 
+extern void HAL_I2C_ListenCpltCallback (I2C_HandleTypeDef *hi2c)
+{
+	HAL_I2C_EnableListen_IT(hi2c);  // restart listening
+}
+
+void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, uint16_t AddrMatchCode)
+{
+  if ((AddrMatchCode && CEC_OWN_ADDRESS_1) && (TransferDirection == I2C_DIRECTION_RECEIVE))   // ADC address 0xE1
+  {
+      txcount = 0;
+      HAL_I2C_Slave_Seq_Transmit_IT(hi2c, TxBuffer, 96, I2C_NEXT_FRAME);    // send all TxData
+  }
+	else if ((AddrMatchCode && CEC_OWN_ADDRESS_2) && (TransferDirection == I2C_DIRECTION_TRANSMIT))  // LED address 0xE2
+	{
+		HAL_I2C_Slave_Seq_Receive_IT(hi2c, RxBuffer, 96, I2C_FIRST_AND_LAST_FRAME);   // recieve all frames
+	}
+	else
+	{
+		HAL_I2C_EnableListen_IT(hi2c);  // restart listening
+	}
+}
+
+
+void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+    // continue sending TxData
+	txcount++;
+	HAL_I2C_Slave_Seq_Transmit_IT(hi2c, TxBuffer+txcount, 1, I2C_NEXT_FRAME);
+}
+
+
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+{
+	HAL_I2C_EnableListen_IT(hi2c);  // restart listening
+}
+
 /* I2C1 init function */
 void MX_I2C1_Init(void)
 {
@@ -107,3 +143,22 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
   }
 }
 
+/**
+  * @brief This function handles I2C1 event interrupt.
+  */
+void I2C1_EV_IRQHandler(void)
+{
+
+  HAL_I2C_EV_IRQHandler(&hi2c1);
+
+}
+
+/**
+  * @brief This function handles I2C1 error interrupt.
+  */
+void I2C1_ER_IRQHandler(void)
+{
+
+  HAL_I2C_ER_IRQHandler(&hi2c1);
+
+}
