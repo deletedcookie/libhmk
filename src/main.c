@@ -57,7 +57,7 @@ int main(void) {
 
   tud_init(BOARD_TUD_RHPORT);
 
-  new_brightness = 20;
+  new_brightness = 1;
   new_rgb_values.r = 255;
   new_rgb_values.g = 0;
   new_rgb_values.b = 0;
@@ -65,8 +65,6 @@ int main(void) {
   while (1) {
     tud_task();
 
-    I2C_update_rgb();
-    HAL_Delay(1000);
     ARGB_task();
     I2C_adc_get();
     analog_task();
