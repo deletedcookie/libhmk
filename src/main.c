@@ -40,6 +40,7 @@ int main(void) {
   crc32_init();
   flash_init();
   MX_I2C1_Init();
+  ARGB_Init();
 
   // Initialize the persistent configuration
   wear_leveling_init();
@@ -63,6 +64,7 @@ int main(void) {
   while (1) {
     // tud_task();
 
+    ARGB_task();
     analog_task();
     // matrix_scan();
     // layout_task();
