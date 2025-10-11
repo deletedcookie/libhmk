@@ -57,13 +57,17 @@ int main(void) {
 
   tud_init(BOARD_TUD_RHPORT);
 
-
-  ARGB_FillRGB(200, 0, 255);
-  while (!ARGB_Show());
+  new_brightness = 20;
+  new_rgb_values.r = 255;
+  new_rgb_values.g = 0;
+  new_rgb_values.b = 0;
 
   while (1) {
     tud_task();
 
+    I2C_update_rgb();
+    HAL_Delay(1000);
+    ARGB_task();
     I2C_adc_get();
     analog_task();
     matrix_scan();

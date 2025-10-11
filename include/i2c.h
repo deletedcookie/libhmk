@@ -24,7 +24,7 @@ void I2C_adc_get(void);
 void I2C1_EV_IRQHandler(void);
 void I2C1_ER_IRQHandler(void);
 void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef * hi2c);
-
+void I2C_update_rgb(void);
 
 #ifdef __cplusplus
 }

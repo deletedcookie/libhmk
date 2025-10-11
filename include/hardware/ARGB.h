@@ -34,6 +34,16 @@ typedef float fl_t;	///< float type
 TIM_HandleTypeDef htim3;
 DMA_HandleTypeDef hdma_tim3_ch2;
 
+struct rgb {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+};
+struct rgb new_rgb_values;
+struct rgb rgb_values;
+
+uint8_t new_brightness;
+
 
 
 /**
@@ -79,6 +89,7 @@ typedef enum ARGB_STATE {
 
 void ARGB_Init(void);   // Initialization
 void ARGB_Clear(void);  // Clear strip
+void ARGB_task(void);
 
 void ARGB_SetBrightness(u8_t br); // Set global brightness
 

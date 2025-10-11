@@ -34,10 +34,11 @@ static void board_clock_init(void) {
   rcc_osc_init.HSEState = RCC_HSE_BYPASS;
   rcc_osc_init.PLL.PLLState = RCC_PLL_ON;
   rcc_osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  rcc_osc_init.PLL.PLLM = BOARD_HSE_VALUE / 1000000;
-  rcc_osc_init.PLL.PLLN = 360;
+  rcc_osc_init.PLL.PLLM = BOARD_HSE_VALUE / 2000000;
+  rcc_osc_init.PLL.PLLN = 72;
   rcc_osc_init.PLL.PLLP = RCC_PLLP_DIV2;
   rcc_osc_init.PLL.PLLQ = 2;
+  rcc_osc_init.PLL.PLLR = 2;
   if (HAL_RCC_OscConfig(&rcc_osc_init) != HAL_OK)
     board_error_handler();
 
@@ -48,8 +49,8 @@ static void board_clock_init(void) {
                            RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   rcc_clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   rcc_clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  rcc_clk_init.APB1CLKDivider = RCC_HCLK_DIV4;
-  rcc_clk_init.APB2CLKDivider = RCC_HCLK_DIV2;
+  rcc_clk_init.APB1CLKDivider = RCC_HCLK_DIV2;
+  rcc_clk_init.APB2CLKDivider = RCC_HCLK_DIV1;
   if (HAL_RCC_ClockConfig(&rcc_clk_init, FLASH_LATENCY_5) != HAL_OK)
     board_error_handler();
 }

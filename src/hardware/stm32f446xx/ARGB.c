@@ -47,6 +47,7 @@
 #include "hardware/hardware.h"  // include header file
 #include "math.h"
 #include "stm32f4xx_hal.h"
+#include "i2c.h"
 
 /**
  * @addtogroup ARGB_Driver
@@ -125,6 +126,24 @@ static void ARGB_TIM_DMADelayPulseCplt(DMA_HandleTypeDef *hdma);
 static void ARGB_TIM_DMADelayPulseHalfCplt(DMA_HandleTypeDef *hdma);
 /// @} //Private
 
+
+void ARGB_task(void)
+{
+    if ((new_rgb_values.r != rgb_values.r) ||
+        (new_rgb_values.g != rgb_values.g) ||
+        (new_rgb_values.b != rgb_values.b) ||
+        (new_brightness != ARGB_BR))
+    {
+        rgb_values = new_rgb_values;
+        ARGB_BR = new_brightness;
+
+        I2C_update_rgb();
+        ARGB_FillRGB(rgb_values.r, rgb_values.g, rgb_values.b);
+        while (!ARGB_Show());
+    }
+}
+
+
 /**
   * Enable DMA controller clock
   */
@@ -141,15 +160,61 @@ static void MX_DMA_Init(void)
 
 }
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+                    /**
+  * Initializes the Global MSP.
+  */
+void HAL_MspInit(void)
+{
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
+  __HAL_RCC_PWR_CLK_ENABLE();
+
+  /* System interrupt init*/
+}
+
+/**
+  * @brief TIM_Base MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param htim_base: TIM_Base handle pointer
+  * @retval None
+  */
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
+{
+  if(htim_base->Instance==TIM3)
+  {
+    /* Peripheral clock enable */
+    __HAL_RCC_TIM3_CLK_ENABLE();
+
+    /* TIM3 DMA Init */
+    /* TIM3_CH2 Init */
+    hdma_tim3_ch2.Instance = DMA1_Stream5;
+    hdma_tim3_ch2.Init.Channel = DMA_CHANNEL_5;
+    hdma_tim3_ch2.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_tim3_ch2.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_tim3_ch2.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_tim3_ch2.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    hdma_tim3_ch2.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_tim3_ch2.Init.Mode = DMA_CIRCULAR;
+    hdma_tim3_ch2.Init.Priority = DMA_PRIORITY_LOW;
+    hdma_tim3_ch2.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+    hdma_tim3_ch2.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+    hdma_tim3_ch2.Init.MemBurst = DMA_MBURST_SINGLE;
+    hdma_tim3_ch2.Init.PeriphBurst = DMA_PBURST_SINGLE;
+    if (HAL_DMA_Init(&hdma_tim3_ch2) != HAL_OK)
+    {
+      board_error_handler();
+    }
+
+    __HAL_LINKDMA(htim_base,hdma[TIM_DMA_ID_CC2],hdma_tim3_ch2);
+  }
+
+}
+
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(htim->Instance==TIM3)
   {
-    /* USER CODE BEGIN TIM3_MspPostInit 0 */
-
-    /* USER CODE END TIM3_MspPostInit 0 */
-
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**TIM3 GPIO Configuration
     PA7     ------> TIM3_CH2
@@ -160,28 +225,34 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  }
 
-    /* USER CODE BEGIN TIM3_MspPostInit 1 */
+}
+/**
+  * @brief TIM_Base MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param htim_base: TIM_Base handle pointer
+  * @retval None
+  */
+void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
+{
+  if(htim_base->Instance==TIM3)
+  {
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM3_CLK_DISABLE();
 
-    /* USER CODE END TIM3_MspPostInit 1 */
+    /* TIM3 DMA DeInit */
+    HAL_DMA_DeInit(htim_base->hdma[TIM_DMA_ID_CC2]);
   }
 
 }
 
 static void MX_TIM3_Init(void)
 {
-
-  /* USER CODE BEGIN TIM3_Init 0 */
-
-  /* USER CODE END TIM3_Init 0 */
-
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
 
-  /* USER CODE BEGIN TIM3_Init 1 */
-
-  /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 0;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;

@@ -10,9 +10,18 @@ I2C_HandleTypeDef hi2c1;
 void I2C_adc_get(void)
 {
   HAL_I2C_Master_Sequential_Receive_IT(&hi2c1, 0xE1, RxBuffer, 96, I2C_FIRST_AND_LAST_FRAME);
-
 }
 
+
+void I2C_update_rgb(void)
+{
+  TxBuffer[0] = new_brightness;
+  TxBuffer[1] = rgb_values.r;
+  TxBuffer[2] = rgb_values.g;
+  TxBuffer[3] = rgb_values.b;
+  
+  HAL_I2C_Master_Seq_Transmit_IT(&hi2c1, 0xE2, TxBuffer, 4, I2C_FIRST_AND_LAST_FRAME);
+}
 
 void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef * hi2c)
 {
