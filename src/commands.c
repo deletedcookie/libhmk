@@ -269,6 +269,20 @@ void command_process(const uint8_t *buf) {
                              &p->gamepad_options);
     break;
   }
+  case COMMAND_GET_LED_CONF: {
+    const command_in_led_conf_t *p = &in->led_conf;
+
+    COMMAND_VERIFY(p->profile < NUM_PROFILES);
+
+    memcpy(out->led_conf, eeconfig->profiles[p->profile].led_conf, sizeof(uint8_t) * 4);
+    break;
+  }
+  case COMMAND_SET_LED_CONF: {
+    const command_in_led_conf_t *p = &in->led_conf;
+      success = EECONFIG_WRITE(profiles[p->profile].led_conf,
+                             &p->led_conf);
+    break;
+  }
   default: {
     // Unknown command
     success = false;

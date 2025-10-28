@@ -51,6 +51,8 @@ typedef enum {
   COMMAND_SET_GAMEPAD_BUTTONS,
   COMMAND_GET_GAMEPAD_OPTIONS,
   COMMAND_SET_GAMEPAD_OPTIONS,
+  COMMAND_GET_LED_CONF,
+  COMMAND_SET_LED_CONF,
 
   COMMAND_UNKNOWN = 255,
 } command_id_t;
@@ -119,6 +121,11 @@ typedef struct __attribute__((packed)) {
   gamepad_options_t gamepad_options;
 } command_in_gamepad_options_t;
 
+typedef struct __attribute__((packed)) {
+  uint8_t profile;
+  uint8_t led_conf[4];
+} command_in_led_conf_t;
+
 // Command input buffer type
 typedef struct __attribute__((packed)) {
   uint8_t command_id;
@@ -136,6 +143,7 @@ typedef struct __attribute__((packed)) {
     command_in_tick_rate_t tick_rate;
     command_in_gamepad_buttons_t gamepad_buttons;
     command_in_gamepad_options_t gamepad_options;
+    command_in_led_conf_t led_conf;
   };
 } command_in_buffer_t;
 
@@ -185,6 +193,8 @@ typedef struct __attribute__((packed)) {
     uint8_t gamepad_buttons[63];
     // For `COMMAND_GET_GAMEPAD_OPTIONS`
     gamepad_options_t gamepad_options;
+    // For `COMMAND_GET_LED_CONF`
+    uint8_t led_conf[4];
   };
 } command_out_buffer_t;
 
