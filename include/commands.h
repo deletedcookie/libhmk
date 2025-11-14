@@ -123,7 +123,7 @@ typedef struct __attribute__((packed)) {
 
 typedef struct __attribute__((packed)) {
   uint8_t profile;
-  uint8_t led_conf[4];
+  uint8_t led_conf[3];
 } command_in_led_conf_t;
 
 // Command input buffer type
@@ -194,7 +194,7 @@ typedef struct __attribute__((packed)) {
     // For `COMMAND_GET_GAMEPAD_OPTIONS`
     gamepad_options_t gamepad_options;
     // For `COMMAND_GET_LED_CONF`
-    uint8_t led_conf[4];
+    uint8_t led_conf[3];
   };
 } command_out_buffer_t;
 

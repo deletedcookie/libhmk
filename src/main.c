@@ -57,10 +57,7 @@ int main(void) {
 
   tud_init(BOARD_TUD_RHPORT);
 
-  new_brightness = 10;
-  new_rgb_values.r = 255;
-  new_rgb_values.g = 0;
-  new_rgb_values.b = 255;
+  update_led = 1;
 
   while (1) {
     tud_task();

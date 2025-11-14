@@ -279,8 +279,11 @@ void command_process(const uint8_t *buf) {
   }
   case COMMAND_SET_LED_CONF: {
     const command_in_led_conf_t *p = &in->led_conf;
-      success = EECONFIG_WRITE(profiles[p->profile].led_conf,
-                             &p->led_conf);
+
+    COMMAND_VERIFY(p->profile < NUM_PROFILES);
+
+    success = EECONFIG_WRITE(profiles[p->profile].led_conf, p->led_conf);
+    update_led = 1;
     break;
   }
   default: {

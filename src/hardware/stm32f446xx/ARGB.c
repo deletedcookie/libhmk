@@ -48,6 +48,7 @@
 #include "math.h"
 #include "stm32f4xx_hal.h"
 #include "i2c.h"
+#include "eeconfig.h"
 
 /**
  * @addtogroup ARGB_Driver
@@ -129,14 +130,12 @@ static void ARGB_TIM_DMADelayPulseHalfCplt(DMA_HandleTypeDef *hdma);
 
 void ARGB_task(void)
 {
-    if ((new_rgb_values.r != rgb_values.r) ||
-        (new_rgb_values.g != rgb_values.g) ||
-        (new_rgb_values.b != rgb_values.b) ||
-        (new_brightness != ARGB_BR))
-    {
-        rgb_values = new_rgb_values;
-        ARGB_BR = new_brightness;
-
+    if (update_led) {
+        update_led = 0;
+        rgb_values.r = CURRENT_PROFILE.led_conf[0];
+        rgb_values.g = CURRENT_PROFILE.led_conf[1];
+        rgb_values.b = CURRENT_PROFILE.led_conf[2];
+        
         I2C_update_rgb();
         ARGB_FillRGB(rgb_values.r, rgb_values.g, rgb_values.b);
         while (!ARGB_Show());
@@ -589,9 +588,9 @@ static void HSV2RGB(u8_t hue, u8_t sat, u8_t val, u8_t *_r, u8_t *_g, u8_t *_b) 
 
     int i = (int)floorf(h * 6);
     float f = h * 6 - (float)i;
-    u8_t p = (u8_t)(v * (1 - s) * 255.0);
-    u8_t q = (u8_t)(v * (1 - f * s) * 255.0);
-    u8_t t = (u8_t)(v * (1 - (1 - f) * s)*255.0);
+    u8_t p = (u8_t)(v * (1.0f - s) * 255.0f);
+    u8_t q = (u8_t)(v * (1.0f - f * s) * 255.0f);
+    u8_t t = (u8_t)(v * (1.0f - (1.0f - f) * s) * 255.0f);
 
     switch (i % 6) {
 // Src: https://stackoverflow.com/questions/3018313

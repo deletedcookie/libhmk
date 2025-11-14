@@ -44,6 +44,8 @@ struct rgb rgb_values;
 
 uint8_t new_brightness;
 
+uint8_t update_led;
+
 
 
 /**

@@ -65,7 +65,7 @@ typedef struct __attribute__((packed)) {
   uint8_t gamepad_buttons[NUM_KEYS];
   gamepad_options_t gamepad_options;
   uint8_t tick_rate;
-  uint8_t led_conf[4];
+  uint8_t led_conf[3];
 } eeconfig_profile_t;
 
 // Keyboard configuration
