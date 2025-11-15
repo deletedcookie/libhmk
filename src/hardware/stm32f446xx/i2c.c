@@ -35,11 +35,11 @@ void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, ui
   if ((AddrMatchCode && CEC_OWN_ADDRESS_1) && (TransferDirection == I2C_DIRECTION_RECEIVE))   // ADC address 0xE1
   {
       txcount = 0;
-      HAL_I2C_Slave_Seq_Transmit_IT(hi2c, TxBuffer, 96, I2C_NEXT_FRAME);    // send all TxData
+      HAL_I2C_Slave_Seq_Transmit_IT(hi2c, TxBuffer, 96, I2C_NEXT_FRAME);    // send first TxData frame
   }
 	else if ((AddrMatchCode && CEC_OWN_ADDRESS_2) && (TransferDirection == I2C_DIRECTION_TRANSMIT))  // LED address 0xE2
 	{
-		HAL_I2C_Slave_Seq_Receive_IT(hi2c, RxBuffer, 4, I2C_FIRST_AND_LAST_FRAME);   // recieve all frames
+		HAL_I2C_Slave_Seq_Receive_IT(hi2c, RxBuffer, 3, I2C_FIRST_AND_LAST_FRAME);   // recieve all frames
 	}
 	else
 	{
@@ -57,10 +57,11 @@ void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
-  new_brightness = RxBuffer[0];
-  new_rgb_values.r = RxBuffer[1];
-  new_rgb_values.g = RxBuffer[2];
-  new_rgb_values.b = RxBuffer[3];
+  rgb_values.r = RxBuffer[0];
+  rgb_values.g = RxBuffer[1];
+  rgb_values.b = RxBuffer[2];
+  
+  update_led = 1;
 }
 
 

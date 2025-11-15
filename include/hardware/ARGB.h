@@ -39,11 +39,9 @@ struct rgb {
     uint8_t g;
     uint8_t b;
 };
-struct rgb new_rgb_values;
 struct rgb rgb_values;
 
-uint8_t new_brightness;
-
+uint8_t update_led;
 
 
 /**

@@ -49,16 +49,18 @@ int main(void) {
   // Initialize the core modules
   analog_init();
   matrix_init();
-  hid_init();
-  deferred_action_init();
-  advanced_key_init();
-  xinput_init();
-  layout_init();
-  command_init();
+  // hid_init();
+  // deferred_action_init();
+  // advanced_key_init();
+  // xinput_init();
+  // layout_init();
+  // command_init();
 
-  tud_init(BOARD_TUD_RHPORT);
+  // tud_init(BOARD_TUD_RHPORT);
 
   HAL_I2C_EnableListen_IT(&hi2c1);
+
+  HAL_Delay(50);
  
 
   while (1) {
