@@ -39,10 +39,7 @@ struct rgb {
     uint8_t g;
     uint8_t b;
 };
-struct rgb new_rgb_values;
 struct rgb rgb_values;
-
-uint8_t new_brightness;
 
 uint8_t update_led;
 
@@ -63,7 +60,7 @@ uint8_t update_led;
 // WS2812  — GRB, 800kHz;
 // SK6812  — RGBW, 800kHz
 
-#define NUM_PIXELS 48 ///< Pixel quantity
+#define NUM_PIXELS 37 ///< Pixel quantity
 
 #define USE_GAMMA_CORRECTION 1 ///< Gamma-correction should fix red&green, try for yourself
 

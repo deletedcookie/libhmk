@@ -19,6 +19,8 @@ uint16_t i2c_adc_buffer[48];
 uint8_t RxBuffer[96];
 uint8_t TxBuffer[96];
 
+uint8_t slave_recalibrate;
+
 void MX_I2C1_Init(void);
 void I2C_adc_get(void);
 void I2C1_EV_IRQHandler(void);

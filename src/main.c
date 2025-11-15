@@ -57,7 +57,9 @@ int main(void) {
 
   tud_init(BOARD_TUD_RHPORT);
 
+  HAL_Delay(50);
   update_led = 1;
+  slave_recalibrate = 0;
 
   while (1) {
     tud_task();
@@ -68,6 +70,11 @@ int main(void) {
     matrix_scan();
     layout_task();
     xinput_task();
+
+    if (slave_recalibrate == 1) {
+      slave_recalibrate = 2;
+      matrix_recalibrate();
+    }
 #if defined(LOG_ENABLED)
     log_task();
 #endif

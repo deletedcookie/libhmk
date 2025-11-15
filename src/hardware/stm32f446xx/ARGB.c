@@ -128,17 +128,16 @@ static void ARGB_TIM_DMADelayPulseHalfCplt(DMA_HandleTypeDef *hdma);
 /// @} //Private
 
 
-void ARGB_task(void)
-{
+void ARGB_task(void) {
     if (update_led) {
         update_led = 0;
         rgb_values.r = CURRENT_PROFILE.led_conf[0];
         rgb_values.g = CURRENT_PROFILE.led_conf[1];
         rgb_values.b = CURRENT_PROFILE.led_conf[2];
         
-        I2C_update_rgb();
         ARGB_FillRGB(rgb_values.r, rgb_values.g, rgb_values.b);
         while (!ARGB_Show());
+        I2C_update_rgb();
     }
 }
 
